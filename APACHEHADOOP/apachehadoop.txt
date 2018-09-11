@@ -1,0 +1,34 @@
+=====================To format namenode
+
+hadoop namenode --format
+
+=====================verify the services running
+
+jps => java services
+
+=====================start all hadoop deamons
+
+start-yarn.sh / start-dfs.sh
+
+===verify all services are running
+namenode
+secondarynamenode
+datanode
+nodemanager
+resourcemanager
+
+====List of files
+
+hadoop fs -ls
+
+hadoop fs -mkdir
+
+====put files from local to hdfs
+
+hadoop fs -put /home/akash/emp.csv /data
+
+=====verify files in directory
+
+hadoop fs -ls /data
+
+
