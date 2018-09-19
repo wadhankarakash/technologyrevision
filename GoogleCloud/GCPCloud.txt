@@ -1,0 +1,50 @@
+https://www.learningjournal.guru/article/google-cloud/free-learning-virtual-machine/ 
+
+akashgoogleproject
+
+http://download.oracle.com/otn-pub/java/jdk/8u172-b11/a58eab1ec242421181065cdc37240b08/jdk-8u172-linux-i586.rpm
+
+-------------download jdk
+
+
+https://github.com/LearningJournal/Spark-Tutorials/blob/master/ApacheSparkTutorial-01-SetupLearningEnvironment.ipynb
+
+
+wget -c --header "cookie:oraclelicence=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u171-b11-demos/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64-demos.rpm
+
+
+wget -c --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.rpm
+yum localinstall jdk-8u171-linux-x64.rpm
+
+
+
+install spark 
+
+wget -c https://archive.apache.org/dist/spark/spark-2.3.0/spark-2.3.0-bin-hadoop2.6.tgz
+
+mkdir ~/spark
+tar -zxvf spark-2.3.0-bin-hadoop2.6.tgz -C ~/spark/
+
+
+
+vi .bash_profile  --- open the bash file
+
+export SPARK_HOME=/home/wadhankar_akash/spark/spark-2.3.0-bin-hadoop2.6
+
+
+export SPARK_HOME=/home/wadhankar_akash/spark/spark-2.3.0-bin-hadoop2.6
+export PATH=$PATH:$HOME/bin:$SPARK_HOME/bin
+
+press esc then type :x or :x! for save and exit
+
+====verify bash profile 
+vi .bash_profile
+
+====make profile as source ===very important step
+source .bash_profile
+
+=====verify the value of spark home
+echo $SPARK_HOME
+
+https://www.youtube.com/watch?v=AYZCpxYVxH4&t=73s
+

@@ -1,0 +1,9 @@
+Problem Statement
+Evaluate company policy and employee related data
+
+Questions
+Number of Male and Female in each department
+Distribution of employee in each location -- 
+Show a chart which will help identify the highest salary for each Job ID
+Show Employees count with dynamic dimension (Dept, Gender, Job Id, Location)
+Show Yearly trend of Employee Count

@@ -1,0 +1,9 @@
+S - Single responsibility
+O - Open closed principle - open to extension but closed to modification
+L - Liskhov substitution principles - Inheritance is used 
+I - Interface segregation principle - create seperate interfaces 
+D - Dependancy Inversion principle - create 
+
+187520 - venkata
+147628 - devendra
+1025561 - shainy 

@@ -1,0 +1,54 @@
+deamon
+node 
+rack 
+cluster
+5 nodes
+primary and secondary 
+
+which two reside together??
+namenode is storage manager
+jt - task manager
+tt - task tracker
+
+fs table
+heart beats - 3 sec
+shortest path algorithm
+data node sends block report to namenode(free space, health, corruption)
+
+====working o fjobs
+checking dependancies in queries
+compile
+create execution plan
+
+secondary namenode - can bring back with the help of fs image and edit log
+
+commit interval 
+
+
+---------------------------Hadoop 2.x architecture
+
+---------------------------
+
+Sqoop
+default 4 mappers
+is map only operation
+
+
+hadoop gs -rmr hdfs://localhost:8020/.*
+
+ports of different servers.....
+
+bounding value query is there to split the data....
+
+if the value specified as split-by is null then those rows will be skipped...
+
+------------
+
+
+Data as avro file
+
+--as-avrodatafile
+
+--hive-table emp_avro --hive-import
+
+--incremental append --lastmodified/--last-value --check-column 'EMPLOYEES_ID'

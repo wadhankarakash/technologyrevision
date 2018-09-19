@@ -1,0 +1,57 @@
+
+
+=============First time
+
+-----process to create a debuggable MVC application
+1. create a folder MvcMovie
+2. open the empty folder in visual studio code
+3. in terminal run the command
+dotnet new mvc
+4. Click on debug tab in left panel and run application - this will create a .vscode folder and 
+launch.json file
+5. In launch.json file keep only .NET core launch (web), remove the cosole settings
+6. Run the command in terminal to build the project
+dotnet build(this will buidl the project and create dll)
+6. Give path of dll in launch.json  "program": "${workspaceFolder}/bin/Debug/netcoreapp2.1/MvcMovie.dll",
+7. create task.json from the pop that come
+8. remove the lines from tasks.json
+
+
+--Getting started
+https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app-xplat/start-mvc?view=aspnetcore-2.1
+
+// Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$msCompile"
+
+9.Click on Debug and click the option Start Debugging
+
+================Always
+--Do clean and rebuild
+1. to clean run
+ > dotnet clean
+2. to build again with changes run
+ > dotnet build
+3. run the project
+
+
+-----------------------------------------------------------------------------------
+.net core
+
+MVA
+https://www.youtube.com/watch?v=xc3Gl4rnWV4
+
+docs
+docs.microsoft.com
+
+
+webapi
+
+https://www.youtube.com/watch?v=aIkpVzqLuhA
+
+
+https://www.youtube.com/watch?v=J5p72gTdx_M
+
+https://www.youtube.com/watch?v=AKkoT0UnUn0
+
+
+
