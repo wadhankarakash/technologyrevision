@@ -1,0 +1,8 @@
+dotnet commands
+
+
+1. mkdir myApp
+2. dotnet new console
+3. dotnet build
+4. dotnet clean
+5. dotnet run

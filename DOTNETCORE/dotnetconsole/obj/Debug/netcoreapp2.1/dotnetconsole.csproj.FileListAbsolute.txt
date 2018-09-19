@@ -1,0 +1,11 @@
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\bin\Debug\netcoreapp2.1\dotnetconsole.deps.json
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\bin\Debug\netcoreapp2.1\dotnetconsole.runtimeconfig.json
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\bin\Debug\netcoreapp2.1\dotnetconsole.runtimeconfig.dev.json
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\bin\Debug\netcoreapp2.1\dotnetconsole.dll
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\bin\Debug\netcoreapp2.1\dotnetconsole.pdb
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.csprojAssemblyReference.cache
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.csproj.CoreCompileInputs.cache
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.AssemblyInfoInputs.cache
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.AssemblyInfo.cs
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.dll
+C:\Users\wadha\Desktop\Digital\breadbutter\dotnetconsole\obj\Debug\netcoreapp2.1\dotnetconsole.pdb
