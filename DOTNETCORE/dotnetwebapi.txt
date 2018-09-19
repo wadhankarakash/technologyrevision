@@ -1,0 +1,5 @@
+1. create folder dotnetwebapi
+2. open the folder in visual studio code
+3. click on view and output
+4. run the command > dotnet new webapi
+5. build the project > dotnet build

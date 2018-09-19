@@ -1,0 +1,5 @@
+--angular material
+npm install --save @angular/material
+
+--angular animations
+npm install --save @angular/animations

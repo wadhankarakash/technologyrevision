@@ -1,0 +1,36 @@
+1. create folder dotnetangular
+2. open the folder in visual studio code
+3. click on view and output
+4. run the command > dotnet new angular
+5. build the project > dotnet build
+
+--------------------------------
+
+-----install angular cli
+npm install -g -g @angular/cli
+
+-----create my-app
+ng new my-app
+
+----change to directory my-app
+cd my-app
+
+----start angular app
+ng serve --open
+
+--angular material
+npm install --save @angular/material
+
+--angular animations
+npm install --save @angular/animations
+
+--install hammer.js
+npm install --save hammerjs
+
+ng generate component about me
+
+----
+ng build --prod
+
+
+
