@@ -1,0 +1,2071 @@
+SQL interview questions 
+
+DML - Different slect queries for interview questions ?
+
+----------------------------------------------------------------------------
+
+Shell of hive > Hive shell
+
+metadata in hive is persistent in pig data is session specific
+ 
+Load in pig only creates pointer but in give it loads the data
+
+there is only one shell in hive. local and mapreduce can be done from same shell
+
+Hive is based on Derby database
+
+Hive supports SQL
+
+Is hive a database??? No
+It is a query engine which sits on top of data stored in HDFS.
+(No namespace or tablespace) so no primary or foreign key
+
+Hive does not support SCD -> slowly changing dimension
+
+hive now a days primary keys and updates are also supported
+
+Hive is primaryly OLAP......It is a dataware house sitting on big data HDFS
+
+Do you need to install hive on all data nodes in cluster ? No 
+at the end hive job in jar so all machines with java can process it
+we just need hive machines to submit job process can be done on any machine
+
+
+-----------------
+
+Meta store in hive 
+-local
+-global/remote
+
+
+-Copy from local put in to HDFS 
+-run pig in mapreduce mode
+-run deamons
+-load the file from HDFS
+
+
+----------------------------------------------------------------------------------------------------6/28/2018
+-/Hive can process unstructured data
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+
+
+==============HIVE MANAGED TABLES==============
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+
+(
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+) -> Serde - serializer and deserializer - How data is written and read from?
+
+
+
+
+
+
+
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/EMP.csv'
+INTO TABLE EMP;
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP1.csv /user/hive/warehouse/emp/emp1.csv
+
+============================
+
+1. FIND OUT AVERAGE SALARY OF ALL EMPLOYEES
+
+SELECT AVG(SALARY)
+FROM EMP;
+
+2. FIND OUT DEPT WISE AVERAGE SALARY
+
+SELECT DEPARTMENT_ID,AVG(SALARY)
+FROM EMP
+GROUP BY DEPARTMENT_ID;
+
+3. FIND OUT DEPARTMENTS WHO HAVE AVERAGE SALARY GREATER THAN 7000
+
+
+
+
+SELECT DEPARTMENT_ID,AVG(SALARY) AS A
+FROM EMP
+GROUP BY DEPARTMENT_ID
+HAVING A>7000;
+
+4. FIND OUT PEOPLE WHO HAVE SALARY GREATER THAN AVERAGE SALARY
+
+SELECT *
+FROM EMP FULL OUTER JOIN (SELECT AVG(SALARY) AS A FROM EMP)Q
+WHERE SALARY > A;
+
+
+============================6/24/4018
+
+What is thrift server?
+lets hive connect to external databases
+============================
+select q.orderid from 
+( 
+select a.orderid 
+from order a 
+where cast(substring(orderamount,1) as int) > 4000  
+union all 
+select orderid 
+from order b 
+where  cast(substring(ordertype,1) as int) >4000  
+union all  
+select orderid 
+from order c 
+where  cast(substring(productdescription,1) as int) >4000
+)
+q;
+
+
+-----------------------------------------------------------------------------------------------------
+-------------------------6/30/2018
+
+Partitioning 
+
+-Staic partitioning
+-Dynamic partitioning
+
+Dynamic partitioning
+-patritioned table can only be loaded from unpartitioned table. I t can not be loaded directly from file.
+
+
+
+try partitioning with two columns ---------?
+
+ideally partitioning was based on date popularly....
+
+Homework 
+-create partition pable 
+-Alter table and add another partition to it
+
+------------------------------------------
+
+Metatadata and fragmentation problem due to small files or large number of files
+
+
+relationship
+associative - closely related - partitioning
+dinstictive - distinctly related - bucketing  
+
+
+
+-------------------------------------------------------------------Life cycle
+
+oracle/csv/xml -> HDFS/Staging -> hive staging tables -> preprocessing -> file formats and testing -> prepossing ->store results for reporting -> reporting plotting and understanding
+
+-----------------------------File formats 7/1/2018.............................................................................................................................
+
+RC file format store in row columner format
+RC file format does not support complex datatype...
+
+
+
+ORC file format can compress 10:1.. 
+PARAQUET - file format of cloudera..best file format for hive - metastore... paraquet stores metadata same as hive... it has support for nested data structures..
+
+
+
+ORC - update is also possible...
+
+avro - binary data format ... default data type is json - it stores data in form of bison..
+avro can be used in framework java, .net and all
+
+----------------------
+you can load emp.orc in orc table
+but emp.csv can not be loaded in orc table
+
+
+try - orc file load to orc table
+orcfile load to normal table to orc table
+csv file to orc table
+
+
+==============HIVE MANAGED TABLES==============
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/EMP.csv'
+INTO TABLE EMP;
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP1.csv /user/hive/warehouse/emp/emp1.csv
+
+============================
+
+1. FIND OUT AVERAGE SALARY OF ALL EMPLOYEES
+
+SELECT AVG(SALARY)
+FROM EMP;
+
+2. FIND OUT DEPT WISE AVERAGE SALARY
+
+SELECT DEPARTMENT_ID,AVG(SALARY)
+FROM EMP
+GROUP BY DEPARTMENT_ID;
+
+3. FIND OUT DEPARTMENTS WHO HAVE AVERAGE SALARY GREATER THAN 7000
+
+SELECT DEPARTMENT_ID,AVG(SALARY) AS A
+FROM EMP
+GROUP BY DEPARTMENT_ID
+HAVING A>7000;
+
+4. FIND OUT PEOPLE WHO HAVE SALARY GREATER THAN AVERAGE SALARY
+
+SELECT *
+FROM EMP FULL OUTER JOIN (SELECT AVG(SALARY) AS A FROM EMP)Q
+WHERE SALARY > A;
+
+
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+Hello vaibhav sir
+
+
+Are you going to start the class at 11:30 today?????
+yes
+Our class to start by 11:30AM today
+thanks sir!
+==============LOADING FROM HDFS FILE=============
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP.csv /data/emp.csv
+
+LOAD DATA INPATH'/data/emp.csv'
+INTO TABLE EMP;
+
+=============LOCATION CLAUSE==============
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP.csv /data/emp.csv
+
+CREATE TABLE EMP_LOCATION
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+LOCATION'/data';
+ORD = LOAD'/home/itelligence/Dataset/CSV/orders.csv' USING PigStorage(',') as (OrderID:chararray,CustomerID:chararray,Company:chararray,CompanyAddress:chararray,
+CompanyCity:chararray,CompanyState:chararray,CompanyZip:chararray,
+OrderContact:chararray,DeliveryAddress:chararray,DeliveryCity:chararray,
+DeliveryState:chararray,PaymentType:chararray,PaymentTerms:chararray,
+Title:chararray,DeliveryOption:chararray,DeliveryVendor:chararray,
+ConfirmationCode:chararray,OrderAmount:chararray,OrderType:chararray,
+ProductDescription:chararray);
+
+A = FOREACH ORD GENERATE $0,$17;
+
+B = FILTER A BY $1 MATCHES '\\$.*';
+OR
+B = FILTER A BY SUBSTRING($1,0,1) == '$';
+
+A1 = FOREACH ORD GENERATE $0,$18;
+B1 = FILTER A1 BY SUBSTRING($1,0,1) == '$';
+
+A2 = FOREACH ORD GENERATE $0,$19;
+B2 = FILTER A2 BY SUBSTRING($1,0,1) == '$';
+
+C = UNION B,B1,B2;
+
+D =  FILTER C BY (INT)SUBSTRING($1,1,20)) > 400;
+
+DUMP D;
+https://drive.google.com/open?id=1vFHLgmJL9uLGtBlz7xrsw06fJV9igpzl
+OrderID,CustomerID,Company,CompanyAddress,CompanyCity,CompanyState,CompanyZip,OrderContact,DeliveryAddress,DeliveryCity,DeliveryState,PaymentType,PaymentTerms,Title,DeliveryOption,DeliveryVendor,ConfirmationCode,OrderAmount,OrderType,ProductDescription
+O-5079,10110085,JOSEPHTHAL LYON & ROSS,96 FISHER ROAD,MAHWAH,NJ,7430,PARKE PERSLEY OR RAYFORD LECROY,96 FISHER ROAD,MAHWAH,NJ,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44162,$21.00 ,Generic,O/L/B P/W L/S TAWNY SHIMMER .08 OZ.
+O-6658,10110086,NRCA,10255 W.HIGGINS RD.,ROSEMONT,IL,60018-5607,ROLANDA SORTO,10255 W.HIGGINS RD.,ROSEMONT,IL,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44163,$56.40 ,Generic,O-L.B PW LIPSTYLO LASTING PERFECTION .08 OZ.
+O-8195,10110087,POND EQUITIES,4522 FT. HAMILTON PKWY.,BROOKLYN,NY,11219,KONSTANTIN PEDDICORD,4522 FT. HAMILTON PKWY.,BROOKLYN,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44164,$78.00 ,Generic,O/L/B P/W L/S TAWNY SHIMMER LASTING PERFECTION LIPSTYLO TAWNY SHIMMER .08 OZ.
+O-9130,10110088,SCHRODER & COMPANY,787 SEVENTH AVENUE,NEW YORK,NY,10019,GIORGIA TWITCHELL,787 SEVENTH AVENUE,NEW YORK,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44165,$14.00 ,Generic,A/COL L PERFECTION L/S REF P SUPREME LASTING PERFECTION LIPSTYLO TAWNY SHIMMER .08 OZ.
+O-9352,10110089,YUASA TRADING COMPANY (AMERICA),150 EAST 52ND STREET,NEW YORK,NY,10005,STEFFI MCGLOWN,150 EAST 52ND STREET,NEW YORK,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44166,$54.00 ,Generic,O/L/B L PERFECTION REF LIPSTYLO COFFEE PEACH SUPREME .08 OZ.
+O-9517,10110090,DAI ICHI KANGYO BANK,1 WORLD TRADE CENTRE SUITE 49 - 11,NEW YORK,NEW YORK,10048,AIKEN DOBRICK,1 WORLD TRADE CENTRE SUITE 49 - 11,NEW YORK,NEW YORK,American Express,CHARGE,Account Executive,UPR,United Parcel Service Red,44167,$58.00 ,Generic,LASTING PERFECTION LIP COLOR HOLLYWOOD GLAMOUR 1.7 G MAUVE ICE #752
+PARTITIONING
+
+enable dynamic partitioning
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create partitioned emp table
+
+CREATE TABLE EMP_PART
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT
+)
+PARTITIONED BY (DEPARTMENT_ID INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD PARTITIONED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_PART PARTITION(DEPARTMENT_ID)
+SELECT * FROM EMP;
+PARTITIONING
+
+enable dynamic partitioning
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create partitioned emp table
+
+CREATE TABLE EMP_PART2
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT
+)
+PARTITIONED BY (MANAGER_ID INT,DEPARTMENT_ID INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD PARTITIONED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_PART2 PARTITION(MANAGER_ID,DEPARTMENT_ID)
+SELECT * FROM EMP;
+BUCKETING
+
+enable BUCKETING
+
+set hive.enforce.bucketing=true;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create bucketed emp table
+
+CREATE TABLE EMP_BUCKETED
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+CLUSTERED BY (DEPARTMENT_ID) INTO 4 BUCKETS
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD BUCKETED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_BUCKETED
+SELECT * FROM EMP;
+"REVISION AGAINST GENUINE REVIEW"People who want to join revision sessions and have posted reviews kindly click on this link to join the sessions.
+https://hangouts.google.com/group/qfytKm1OvdxmQA8h2
+Review links: 1. Google 
+http://search.google.com/local/writereview?placeid=ChIJC0EnkB-5wjsRt2knHOGO7oU
+
+https://www.urbanpro.com/providerRecommendation/fillRecommendation?branchId=235758&fromProfile=fromProfile
+https://www.facebook.com/pg/etlhive/reviews/
+==================SEQUENCE FILE================
+KEY VALUE
+
+COMPRESSION
+
+FASTER SORTING AND GROUPING
+==================RC==========================
+
+RCFile (Record Columnar File)
+RCFile stores table data in a flat file consisting of binary key/value pairs. 
+
+It first partitions rows horizontally into row splits 
+
+Then it vertically partitions each row split in a columnar way. 
+
+RCFile stores the metadata of a row split as the key part of a record, and all the data of a row split as the value part.
+
+As row-store, RCFile guarantees that data in the same row are located in the same node.
+
+As column-store, RCFile can exploit column-wise data compression and skip unnecessary column reads.
+
+==================ORC==========================
+ORC file format advantages:
+
+a single file as the output of each task, which reduces the NameNode's load
+
+Hive type support including datetime, decimal, and the complex types (struct, list, map, and union)
+
+light-weight indexes stored within the file
+
+skip row groups that don't pass predicate filtering
+
+seek to a given row
+
+concurrent reads of the same file using separate RecordReaders
+ability to split files without scanning for markers
+bound the amount of memory needed for reading or writing
+
+metadata stored using Protocol Buffers, which allows addition and removal of fields
+
+
+CREATE TABLE ... STORED AS ORC
+
+ALTER TABLE ... [PARTITION partition_spec] SET FILEFORMAT ORC
+
+SET hive.default.fileformat=Orc
+
+create table Addresses (
+ name string,
+ street string,
+ city string,
+ state string,
+ zip int
+) stored as orc;
+
+====================AVRO========================
+Rich data structures.
+A compact, fast, binary data format.
+A container file, to store persistent data.
+Remote procedure call (RPC).
+Simple integration with dynamic languages. Code generation is not required to read or write data files nor to use or implement RPC protocols. Code generation as an optional optimization, only worth implementing for statically typed languages.
+
+CREATE TABLE emp_AVRO
+ ROW FORMAT SERDE
+EMP.orc  ==>  EMP_ORC
+
+EMP.csv  ==> X(NOT ALLOWED)  EMP_ORC
+
+EMP.csv ==> EMP(TABLE) ==> EMP_ORC
+-----------------------------------------------------------------------------------------------------------------
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/EMP.csv'
+INTO TABLE EMP;
+
+
+CREATE TABLE EMP_SEQ
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+STORED AS SEQUENCEFILE;
+
+INSERT OVERWRITE TABLE EMP_SEQ
+SELECT * FROM EMP;
+
+
+CREATE TABLE EMP_RC
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+STORED AS RCFILE;
+
+INSERT OVERWRITE TABLE EMP_RC
+SELECT * FROM EMP;
+
+=========================================================================7/14/2018======================================================================================
+====Static partitioning
+create table emp_static 
+(
+firstname string,
+lastname string,
+empid int
+)
+partitioned by (departmentid int)
+row format delimited
+fields terminated by ','
+lines terminated by '\n';
+
+
+
+
+==load the table form file and table
+
+
+==============================================User defined function===================================
+
+PIG
+extends EvalFunc
+method exec()
+
+HIVE
+extends UDF
+method evaluate()
+
+
+
+
+
+---hadoop can not process data with global shared state.....
+
+
+========================================Interview preparations
+Hive
+
+https://www.tutorialspoint.com/hive/
+Interview questions
+Sir theory and examples
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

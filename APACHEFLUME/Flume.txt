@@ -1,0 +1,21 @@
+
+yuvraj.sources=s
+yuvraj.sinks=sk
+yuvraj.channels=c
+
+yuvraj.sources.s.type=spooldir
+yuvraj.sources.s.spoolDir=/home/itelligence/Desktop/dmart
+
+yuvraj.channels.c.type=memory
+
+yuvraj.sinks.sk.type=hdfs
+yuvraj.sinks.sk.hdfs.path=/vaibhav/flume/example_2
+yuvraj.sinks.sk.hdfs.fileType=CompressedStream
+yuvraj.sinks.sk.hdfs.codeC=gzip
+
+# yuvraj.sinks.sk.hdfs.fileType=DataStream
+
+yuvraj.sources.s.channels=c
+yuvraj.sinks.sk.channel=c
+
+# flume-ng agent -n yuvraj -c conf -f /home/itelligence/Desktop/flume_spool.conf

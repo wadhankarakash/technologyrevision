@@ -1,0 +1,73 @@
+Learning Hadoop
+
+===============HOW TO START HADOOP===============
+(OPEN A TERMINAL----CTRL + ALT + t)
+hadoop namenode -format     (correct)
+
+hadoop namenode format    (Incorrect)
+hadoop namenode - format   (Incorrect)
+
+(Create a blank FStable)
+
+start-all.sh
+(Start all daemons)
+
+jps
+(Check Status of running Daemons)
+
+===========OPEN WEB UI FOR NAMENODE AND JOBTRACKER=============
+
+Open Firefox and click on Namenode bookmark
+
+Open Another tab and click on Jobtracker bookmark
+
+==============IF YOU MESSED UP WITH DAEMONS================
+
+stop-all.sh
+
+VM restart
+
+hadoop namenode -format
+
+start-all.sh
+
+
+
+==============CLEAR SCREEN================
+
+CTRL + L
+
+==============COPY DATA FROM LFS TO HDFS================
+
+hadoop fs -copyFromLocal <src_LFS> <target_HDFS>
+
+hadoop fs -copyFromLocal /home/itelligence/Akash/Akash1 (copy).txt /10368
+hadoop fs -copyFromLocal /home/itelligence/Akash/AkashDocs/Morganstanley /10368/jaws1
+
+
+
+hadoop fs -put <src_LFS> <target_HDFS>
+
+hadoop fs -copyFromLocal /home/itelligence/Dataset/CSV/EMP.csv /ETLHIVE/VAIBHAV/EMP2.csv
+
+            DATA FROM HDFS TO LFS===============
+
+hadoop fs -copyToLocal <src_HDFS> <target_LFS>
+
+===============CREATE A DIRECTORY IN HDFS===============
+
+hadoop fs -mkdir /A2/Vaibhav
+
+===============REMOVE A DIRECTORY===============
+
+hadoop fs -rmr /ETLHIVE
+
+hadoop fs -rmr hdfs://localhost:8020/*
+
+==============REMOVE A FILE FROM HDFS================
+
+hadoop fs -rm <file_path>
+
+
+--------------------------------------------------------------------------------------
+http://localhost:50070/dfshealth.jsp -> Namenode

@@ -1,0 +1,88 @@
+1. spark arch
+2. scala
+3. core spark - 3
+4. spark sql - 3
+5. spark streaming - 3
+6. pi spark - 3
+7. resume preparation
+
+==============Drawbacks of hadoop
+Batch processing
+time consuming - no real time
+pig and hive is not meant for complex business apps
+hadoop process in memory but ewrite it on disk
+hadoop read and write is expensive
+
+=>in memory processing
+=>Language stack 
+=>
+
+spark can keep data from 
+HDFS
+LFS
+Cassandra
+S3
+
+====================Two modes
+standlone deployment
+hadoop hosted(YARN hosted)
+
+==================cluster management
+
+YARN/MESOS/Spark own cluster manager
+Mesos is used by company called MAPR
+
+
+==================
+
+Driver => Executers1,Executers2,Executers3.....
+
+Core Spark
+Spark SQL
+Spark streaming 
+ 
+ML Lib
+Graph X
+
+Spark core -> RDD
+Spark SQL -> DF
+Spark stream -> Dstream
+
+SparkContext -> Spark conf
+
+
+
+spark context -> sc (heart of spark)
+Initialize memory and allocate memory
+
+
+Driver has to sub components
+1 DAG (Directed ascyclic graph) - creating various I/O estimates of Job
+2. schedular and Task Scheduler
+
+DAG is then optimized.....
+DAG optimizaton
+
+
+==================
+
+task metadata is present in -> executor
+job metadata is present in -> driver
+
+
+RDD -> Resilient Distributed dataset
+Resilient - ability to grow and shrnk
+
+==================Two types of operation on RDD
+
+Transformations and Actions
+
+Transformations
+map,flatmap, join, co group, filter, sorting, aggregaiton
+
+Action
+count, take, first, illustrate... 
+=========================================================================================
+
+spark-shell
+
