@@ -1,0 +1,293 @@
+=============see all running services====
+jps
+
+=============Format namenode=============
+hadoop namenode -format
+
+=============Start all services=========
+
+start-all.sh
+
+============copy from local============
+
+hadoop fs -copyFromLocal /home/itelligence/Desktop/emp.csv /datawarehouse/uioli/2018-07-15
+
+hadoop fs -put /home/itelligence/Desktop/emp.csv /datawarehouse/uioli/2018-07-12
+
+====================create directory in hdfs=============================
+
+hadoop fs -mkdir datawarehouse
+
+====================remove directory in hdfs=============================
+
+hadoop fs -rmr /datawarehouse3
+
+====================remove a file form hdfs==============================
+
+hadoop fs -rm /
+
+============================Transfer data from RDBMS to HADOOP with the help of SQOOP=================================
+
+mysql -u root -p
+
+hr
+
+show databases;
+
+use vaibhav;
+
+show tables;
+
+
+select * from employees;
+
+
+--------------------------SQOOP
+
+sqoop import --connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/table/data1.csv
+
+----import with append
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibbhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/table/data1.csv
+--append
+
+----import with single mapper (m=1) if table does not have unique column or primary key
+sqoop import --connect jdbc:mysql://localhost:3306/vaibhav --username root --password hr --table employees --target-dir /datawarehouse/table/data1.csv --append -m 1
+
+----import with split by apecific column
+
+sqoop import
+--connnect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/data2.csv
+--split-by 'MANAGER_ID'
+
+----columnr import
+
+sqoop import
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/columnimport/data.csv
+--columns 'FIRST_NAME,LAST_NAME'
+
+--------import only one mapper--used for tables which does not have any unique columns or primary key
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/columnimport/data.csv
+-m 1
+
+-------conditional columnr import------------------
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/conditioncolumn1
+--columns 'FIRST_NAME,LAST_NAME'
+--where 'DEPARTMENT_ID =50'
+
+--------query import-------------------------------
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--target-dir /datawarehouse/query
+--query 'select * from employees where $CONDITIONS'
+--split-by 'EMPLOYEE_ID'
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--target-dir /datawarehouse/query
+--query 'select * from employees where $CONDITIONS and employee_id >100 and employee_id < 200'
+--split-by 'EMPLOYEE_ID'
+
+
+----password protection----------------------------
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+-P
+--target-dir /datawarehouse/passwordexample
+--table employees
+
+----create password file on desktop
+echo -n hr >>Desktop/pwd.txt
+
+hadoop fs -put /home/itelligence/Desktop/pwd.txt /datawarehouse/password
+
+sqoop import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password-file /datawarehouse/password
+--table employees
+--target-dir /datawarehouse/passwordexample
+
+----option file-------------------------------------
+
+option file 
+
+import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password-file /datawarehouse/password
+
+
+sqoop --options-file /datawarehouse/optionfile --table employees --target-dir /datawarehouse/optionfileexample
+
+--------------------------------------------------
+
+create job
+
+sqoop job 
+--create j1 
+-- import 
+--connect jdbc:mysql://localhost:3306/vaibhav
+--username root
+--password hr
+--table employees
+--target-dir /datawarehouse/table/data1.csv
+--append
+
+sqoop job -list
+
+sqoop job --exec j1
+
+
+================================================Hive practice
+
+show tables
+
+select * from emp
+
+
+
+-------create table
+create table emp
+(
+FNAME string,LNAME string,EID int,SALARY string,DATE string,DID int
+)
+row format delimited
+fields terminated by ','
+lines terminated by '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Desktop/emp.csv'
+into table emp
+
+
+1. FIND OUT AVERAGE SALARY OF ALL EMPLOYEES
+
+SELECT AVG(SALARY)
+FROM EMP;
+
+2. FIND OUT DEPT WISE AVERAGE SALARY
+
+SELECT dID,AVG(SALARY)
+FROM EMP
+GROUP BY dID;
+
+3. FIND OUT DEPARTMENTS WHO HAVE AVERAGE SALARY GREATER THAN 50000
+
+select did,avg(salary)
+from emp 
+group by did
+having avg(salary) > 50000;
+
+4. FIND OUT PEOPLE WHO HAVE SALARY GREATER THAN AVERAGE SALARY
+
+select fname 
+from emp full outer join (select avg(salary) as A from emp)Q
+where salary > A;
+
+
+
+-------------------------------------------Study joins
+
+create table department
+(
+did int,name string
+)
+row format delimited
+fields terminated by ','
+lines terminated by '\n'
+
+Load data local inpath'/home/itelligence/Desktop/department.csv'
+into table department
+
+--inner join (only the common data)
+select * from emp inner join department on emp.did = department.did
+
+
+--left outer join(intersection data and all data from left table)
+select * from emp left outer join department on emp.did = department.did
+
+
+--right outer join(intersection data + all data from right table)
+select * from emp eight outer join department on emp.did = department.did
+
+--union all(format of both the tables needs to be same)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------Transfer data from SQOOP to HDFS  using sqoop import-------------------------------------------
