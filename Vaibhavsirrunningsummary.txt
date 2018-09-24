@@ -1,0 +1,2692 @@
+===========HOW TO START PIG==============
+LOCAL MODE
+pig -x local
+
+
+MAPREDUCEMODE
+pig
+or
+pig -x mapreduce
+
+============DATA INGESTION(SCHEMALESS LOADING)==============
+
+EMP = LOAD'/home/itelligence/Dataset/CSV/EMP.csv' USING PigStorage(',');
+
+A = FOREACH EMP GENERATE $0,$1,$2..$7;
+
+DUMP A;
+
+=============FOREACH GENERATE=============
+
+SELECT FIRST_NAME,LAST_NAME........GENERATE FIRST_NAME,LAST_NAME
+FROM EMP;.........FOREACH EMP
+
+A = FOREACH EMP GENERATE FIRST_NAME,LAST_NAME;
+
+============SCHEMA BASED LOADING==============
+
+EMP2 = LOAD'/home/itelligence/Dataset/CSV/EMP.csv' USING PigStorage(',') AS (EMPLOYEE_ID:INT,FIRST_NAME:CHARARRAY,LAST_NAME:CHARARRAY,
+EMAIL:CHARARRAY,PHONE_NUMBER:CHARARRAY,HIRE_DATE:CHARARRAY,
+JOB_ID:CHARARRAY,SALARY:INT,MANAGER_ID:INT,DEPARTMENT_ID:INT);
+
+PIG N HIVE
+SCHEMA ON READ
+
+RDBMS
+SCHEMA ON WRITE
+
+Vaibhav Bajaj • 3 Jun, 12:58
+
+Vaibhav added Anubha Choudhary to the Hangout.
+3 Jun, 12:59
+
+Missed call from Anubha
+3 Jun, 13:05
+
+
+
+
+
+Vaibhav Bajaj • 3 Jun, 13:14
+
+
+
+
+import
+--connect
+'jdbc:sqlserver://dev-data.centralindia.cloudapp.azure.com:1433;databasename=SU-CCS'
+--username
+development
+--password
+XYZ
+
+Sir, here is the content of options file
+
+Saurabh • 3 Jun, 13:18
+
+
+
+
+sqoop job --create CCS_NEW -- --options-file /home/itelligence/Desktop/Configs/ConnectionParams.txt --table SiteContract -- --schema ccs --split-by 'ContractId' --target-dir /DEV-DATA/SU-CCS/Contract_NEW --incremental append --check-column 'ContractId' --last-value 0
+
+Saurabh • 3 Jun, 13:49
+
+
+
+
+
+==============FUNCTIONS=============
+
+A = FOREACH EMP2 GENERATE HIRE_DATE,SUBSTRING(HIRE_DATE,0,2) AS DAY:INT,SUBSTRING(HIRE_DATE,3,6) AS MONTH:CHARARRAY,SUBSTRING(HIRE_DATE,7,10) AS YEAR:INT;
+
+============FILTERING AND SORTING DATA==============
+
+A = FOREACH EMP2 GENERATE HIRE_DATE,(INT)SUBSTRING(HIRE_DATE,0,2),SUBSTRING(HIRE_DATE,3,6),(INT)SUBSTRING(HIRE_DATE,7,10);
+
+B = FILTER A BY $3>98;
+
+A = FILTER EMP2 BY SUBSTRING(FIRST_NAME,0,1) == 'A';
+
+Vaibhav Bajaj • 3 Jun, 13:49
+
+
+
+
+Sir, here is the example where I am trying schema
+
+Saurabh • 3 Jun, 13:49
+
+Missed call from Anubha
+8 Jun, 22:55
+
+Akshay has left the Hangout.
+9 Jun, 09:27
+
+Vaibhav removed Nupur Deshmukh from the Hangout.
+9 Jun, 09:29
+
+
+
+
+Hi folks our class to start from 1PM today
+
+Vaibhav Bajaj • 9 Jun, 10:09
+
+You missed a call
+9 Jun, 10:10
+
+
+
+
+Hi Sir.. So is it confirmed.. That we need to come by 1 pm today?
+
+Ajinkya • 9 Jun, 10:41
+
+
+
+
+=============GROUPING AND AGGREGATION(GROUP LEVEL)=============
+
+EMP = LOAD'/home/itelligence/Dataset/CSV/EMP.csv' USING PigStorage(',')
+as (EMPLOYEE_ID:Int,FIRST_NAME:chararray,LAST_NAME:chararray,EMAIL:chararray,PHONE_NUMBER:chararray,HIRE_DATE:chararray,
+JOB_ID:chararray,SALARY:int,MANAGER_ID:int,DEPARTMENT_ID:int);
+
+A = GROUP EMP BY $9;
+
+(GROUP_KEY,{BAG(SET OF TUPLES[SET OF VALUES])})
+
+B = FOREACH A GENERATE $0,COUNT($1);
+
+B = FOREACH A GENERATE $0,AVG($1.$7);
+
+SELECT DID,AVG(SALARY)
+FROM EMP
+GROUP BY DID;
+
+=============GROUPING AND AGGREGATION(TABLE LEVEL)=============
+EMP = LOAD'/home/itelligence/Dataset/CSV/EMP.csv' USING PigStorage(',')
+as (EMPLOYEE_ID:Int,FIRST_NAME:chararray,LAST_NAME:chararray,EMAIL:chararray,PHONE_NUMBER:chararray,HIRE_DATE:chararray,
+JOB_ID:chararray,SALARY:int,MANAGER_ID:int,DEPARTMENT_ID:int);
+
+A = GROUP EMP ALL;
+
+B = FOREACH A GENERATE COUNT($1),AVG($1.$7);
+
+SELECT AVG(SALARY)
+FROM EMP;
+
+Vaibhav Bajaj • 9 Jun, 13:35
+
+Vaibhav added Deepan Munjal to the Hangout.
+9 Jun, 13:35
+
+
+
+
+=============COGROUP=============
+
+DEPT = LOAD'/home/itelligence/Dataset/CSV/DEPT.csv' USING PigStorage(',') as (did:int,dname:chararray);
+
+A = COGROUP EMP BY DEPARTMENT_ID,DEPT BY did;
+
+B = FOREACH A GENERATE $0,COUNT($1),COUNT($2);
+
+A = COGROUP SAVINGS BY CID,CREDIT_CARDS BY CID,LOANS BY CID,CURRENT BY CID;
+
+B = FOREACH A GENERATE $0,COUNT($1),COUNT($2);
+
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!-- Put site-specific property overrides in this file. -->
+<configuration>
+<property>
+<name>dfs.replication</name>
+<value>1</value>
+</property>
+<property>
+<name>dfs.permissions</name>
+<value>false</value>
+</property>
+<property>
+<name>dfs.permissions</name>
+<value>false</value>
+</property>
+<property>
+<name>dfs.name.dir</name>
+<value>/home/itelligence/hadoop-1.2.0/Vaibhav/name</value>
+</property>
+<property>
+<name>dfs.data.dir</name>
+<value>/home/itelligence/hadoop-1.2.0/Vaibhav/data</value>
+</property>
+<property>
+<name>dfs.namesecondary.dir</name>
+<value>/home/itelligence/hadoop-1.2.0/Vaibhav/ns</value>
+</property>
+</configuration>
+
+70,ABC
+60,CC
+30,FNA
+20,IT
+50,ADMIN
+21,MARKETING
+22,SALES
+23,HR
+70,FIN
+
+Vaibhav Bajaj • 9 Jun, 14:07
+
+
+
+
+A = JOIN EMP BY DEPARTMENT_ID,DEPT BY did USING 'replicated';
+
+Vaibhav Bajaj • 9 Jun, 14:40
+
+
+
+
+I a
+
+rahul • 9 Jun, 14:43
+
+
+
+
+https://medium.com/@bkvarda/building-a-custom-flume-interceptor-8c7a55070038
+
+https://www.programcreek.com/java-api-examples/index.php?api=org.apache.flume.interceptor.Interceptor
+
+https://data-flair.training/blogs/flume-interceptors/
+
+Vaibhav Bajaj • 9 Jun, 14:50
+
+
+
+
+EMP = LOAD'/home/itelligence/Dataset/MULTIPLE_DELIMITERS.txt';
+
+A = FOREACH EMP GENERATE FLATTEN(REGEX_EXTRACT_ALL($0,'(.*) (.*),(.*):(.*)'));
+
+DUMP A;
+
+SWADHIN JAIN,JAIPUR:2000
+(.*) (.*),(.*):(.*)
+
+Vaibhav Bajaj • 10 Jun, 12:39
+
+
+
+
+A = LOAD'/home/itelligence/Dataset/classification_data/data/snapdeal';
+
+B = FOREACH A GENERATE FLATTEN(TOKENIZE(UPPER(REPLACE($0,'[^a-zA-Z0-9 ]',''))));
+
+C = GROUP B BY $0;
+
+D = FOREACH C GENERATE $0,COUNT($1);
+
+DUMP D;
+
+Vaibhav Bajaj • 10 Jun, 13:15
+
+
+
+
+18   A = LOAD'pig_1521348165002.log';
+19   B = FILTER A BY SUBSTRING($0,0,5) == 'ERROR';
+20   C = FOREACH B GENERATE REGEX_EXTRACT_ALL($0,'ERROR (.*): (.*)');
+21   C = FOREACH B GENERATE FLATTEN(REGEX_EXTRACT_ALL($0,'ERROR (.*): (.*)'));
+
+Vaibhav Bajaj • 10 Jun, 13:50
+
+
+
+
+{"EMPLOYEE_ID": 100,"FIRST_NAME": "Steven","LAST_NAME": "King","EMAIL": "SKING","PHONE_NUMBER": "515.123.4567","HIRE_DATE": "17-JUN-87","JOB_ID": "AD_PRES","SALARY": 24000,"MANAGER_ID": "","DEPARTMENT_ID": 90}
+
+A = LOAD'/home/itelligence/Dataset/abc.json' USING JsonLoader('EMPLOYEE_ID:CHARARRAY,FIRST_NAME:CHARARRAY,LAST_NAME:CHARARRAY,EMAIL:CHARARRAY,
+PHONE_NUMBER:CHARARRAY,HIRE_DATE:CHARARRAY,JOB_ID:CHARARRAY,SALARY:CHARARRAY,MANAGER_ID:CHARARRAY,
+DEPARTMENT_ID:CHARARRAY');
+
+Vaibhav Bajaj • 16 Jun, 12:43
+
+
+
+
+================USER DEFINED FUNCTIONS====================
+ package myudfs;
+ import java.io.IOException;
+ import org.apache.pig.EvalFunc;
+ import org.apache.pig.data.Tuple;
+ public class TOUPPER extends EvalFunc<String>
+ {    public String exec(Tuple input) throws IOException {
+      if (input == null || input.size() == 0)
+           return null;
+       try{
+          String str = input.get(0).toString();
+          return str.toUpperCase();
+       }catch(Exception e){
+           throw new IOException("Caught exception processing input row ", e);
+ }}} 
+ CREATE PROJECT ==> ADD LIBRARIES(HADOOP,PIG) ==> CREATE PACKAGE ==> CREATE CLASS ==> PASTE PROGRAM ==> EXPORT TO JAR
+   REGISTER /home/itelligence/Desktop/udf_pig_NS.jar
+   A = FOREACH EMP GENERATE myudfs.TOUPPER($1);
+
+Vaibhav Bajaj • 16 Jun, 13:24
+
+
+
+
+<ROW>
+
+<EMPLOYEE_ID>105</EMPLOYEE_ID>
+
+<FIRST_NAME>David</FIRST_NAME>
+
+<LAST_NAME>Austin</LAST_NAME>
+
+<EMAIL>DAUSTIN</EMAIL>
+
+<PHONE_NUMBER>590.423.4569</PHONE_NUMBER>
+
+<HIRE_DATE>25-JUN-97</HIRE_DATE>
+
+<JOB_ID>IT_PROG</JOB_ID>
+
+<SALARY>4800</SALARY>
+
+<MANAGER_ID>103</MANAGER_ID>
+
+<DEPARTMENT_ID>60</DEPARTMENT_ID>
+
+</ROW>
+
+<ROW>
+
+<EMPLOYEE_ID>106</EMPLOYEE_ID>
+
+<FIRST_NAME>Valli</FIRST_NAME>
+
+<LAST_NAME>Pataballa</LAST_NAME>
+
+<EMAIL>VPATABAL</EMAIL>
+
+<PHONE_NUMBER>590.423.4560</PHONE_NUMBER>
+
+<HIRE_DATE>05-FEB-98</HIRE_DATE>
+
+<JOB_ID>IT_PROG</JOB_ID>
+
+<SALARY>4800</SALARY>
+
+<MANAGER_ID>103</MANAGER_ID>
+
+<DEPARTMENT_ID>60</DEPARTMENT_ID>
+
+</ROW>
+
+<ROW>
+
+<EMPLOYEE_ID>107</EMPLOYEE_ID>
+
+<FIRST_NAME>Diana</FIRST_NAME>
+
+<LAST_NAME>Lorentz</LAST_NAME>
+
+<EMAIL>DLORENTZ</EMAIL>
+
+<PHONE_NUMBER>590.423.5567</PHONE_NUMBER>
+
+<HIRE_DATE>07-FEB-99</HIRE_DATE>
+
+<JOB_ID>IT_PROG</JOB_ID>
+
+<SALARY>4200</SALARY>
+
+<MANAGER_ID>103</MANAGER_ID>
+
+<DEPARTMENT_ID>60</DEPARTMENT_ID>
+
+</ROW>
+
+<ROW>
+
+<EMPLOYEE_ID>108</EMPLOYEE_ID>
+
+<FIRST_NAME>Nancy</FIRST_NAME>
+
+<LAST_NAME>Greenberg</LAST_NAME>
+
+<EMAIL>NGREENBE</EMAIL>
+
+<PHONE_NUMBER>515.124.4569</PHONE_NUMBER>
+
+<HIRE_DATE>17-AUG-94</HIRE_DATE>
+
+<JOB_ID>FI_MGR</JOB_ID>
+
+<SALARY>12000</SALARY>
+
+<MANAGER_ID>101</MANAGER_ID>
+
+<DEPARTMENT_ID>100</DEPARTMENT_ID>
+
+</ROW>
+
+EMP_XML = LOAD'/home/itelligence/Dataset/xml/DATA_EMP.xml' USING org.apache.pig.piggybank.storage.XMLLoader('ROW');
+
+A = FOREACH EMP_XML GENERATE FLATTEN(REGEX_EXTRACT_ALL($0,'<ROW>\\s*<EMPLOYEE_ID>(.*)</EMPLOYEE_ID>\\s*<FIRST_NAME>(.*)</FIRST_NAME>\\s*<LAST_NAME>(.*)</LAST_NAME>\\s*<EMAIL>(.*)</EMAIL>\\s*<PHONE_NUMBER>(.*)</PHONE_NUMBER>\\s*<HIRE_DATE>(.*)</HIRE_DATE>\\s*<JOB_ID>(.*)</JOB_ID>\\s*<SALARY>(.*)</SALARY>\\s*<MANAGER_ID>(.*)</MANAGER_ID>\\s*<DEPARTMENT_ID>(.*)</DEPARTMENT_ID>\\s*</ROW>'));
+
+REGISTER /home/itelligence/Desktop/pig_UDF.jar;
+
+Vaibhav Bajaj • 16 Jun, 14:09
+
+
+
+
+Hello vaibhav sir,
+
+Do we have class today???
+
+Anubha • 17 Jun, 10:09
+
+
+
+
+Tell me your status, if you want we can keep else we can give off. If people have already come by then we can take classes.
+
+Vaibhav Bajaj • 17 Jun, 11:44
+
+
+
+
+We r comming
+
+pankaj • 17 Jun, 11:47
+
+
+
+
+http://www.crackinghadoop.com/hadoop-pig-loading-files-with-quotes-and-comma-delimiters/
+
+   --Register the piggybank jar REGISTER piggybank.jar define CSVLoader org.apache.pig.piggybank.storage.CSVLoader(); A = LOAD '/path/to/file.csv' using CSVLoader AS(id:int,year:chararray,total:int);
+
+Vaibhav Bajaj • 17 Jun, 13:20
+
+
+
+
+========OUTSIDE GRUNT SHELL/SHELL SCRIPT/OOZIE========
+
+pig -x local /home/itelligence/Desktop/programs/Pig/myscript.pig
+
+========EXEC COMMAND========
+
+-----goto grunt shell
+
+exec /home/itelligence/Desktop/programs/Pig/myscript.pig
+
+========RUN COMMAND========
+
+-----goto grunt shell
+
+run /home/itelligence/Desktop/programs/Pig/myscript.pig
+
+Vaibhav Bajaj • 17 Jun, 14:00
+
+Vaibhav added Amol Mahale to the Hangout.
+17 Jun, 14:06
+
+
+
+
+{EID:101,FN:"VAIBHAV",LN:"BAJAJ",SAL:"10000"}
+{EID:101,FN:"VAIBHAV",LN:"BAJAJ",SAL:"10000"}
+{EID:101,FN:"VAIBHAV",LN:"BAJAJ",SAL:"10000"}
+{EID:101,FN:"VAIBHAV",LN:"BAJAJ",SAL:"10000"}
+
+Vaibhav Bajaj • 17 Jun, 14:07
+
+
+
+
+Off plz
+
+Rohan • 18 Jun, 11:47
+
+
+
+
+Vaibhav sir, please accept my one on one request.
+
+Vikas • 22 Jun, 17:09
+
+
+
+
+==============HIVE MANAGED TABLES==============
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/EMP.csv'
+INTO TABLE EMP;
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP1.csv /user/hive/warehouse/emp/emp1.csv
+
+============================
+
+1. FIND OUT AVERAGE SALARY OF ALL EMPLOYEES
+
+SELECT AVG(SALARY)
+FROM EMP;
+
+2. FIND OUT DEPT WISE AVERAGE SALARY
+
+SELECT DEPARTMENT_ID,AVG(SALARY)
+FROM EMP
+GROUP BY DEPARTMENT_ID;
+
+3. FIND OUT DEPARTMENTS WHO HAVE AVERAGE SALARY GREATER THAN 7000
+
+SELECT DEPARTMENT_ID,AVG(SALARY) AS A
+FROM EMP
+GROUP BY DEPARTMENT_ID
+HAVING A>7000;
+
+4. FIND OUT PEOPLE WHO HAVE SALARY GREATER THAN AVERAGE SALARY
+
+SELECT *
+FROM EMP FULL OUTER JOIN (SELECT AVG(SALARY) AS A FROM EMP)Q
+WHERE SALARY > A;
+
+
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+============================
+
+Vaibhav Bajaj • 23 Jun, 14:00
+
+
+
+
+Hello vaibhav sir
+
+
+Are you going to start the class at 11:30 today?????
+
+Anubha • 24 Jun, 09:17
+
+
+
+
+yes
+
+Our class to start by 11:30AM today
+
+Vaibhav Bajaj • 24 Jun, 09:37
+
+
+
+
+thanks sir!
+
+Anubha • 24 Jun, 09:39
+
+
+
+
+==============LOADING FROM HDFS FILE=============
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP.csv /data/emp.csv
+
+LOAD DATA INPATH'/data/emp.csv'
+INTO TABLE EMP;
+
+=============LOCATION CLAUSE==============
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP.csv /data/emp.csv
+
+CREATE TABLE EMP_LOCATION
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+LOCATION'/data';
+
+Vaibhav Bajaj • 24 Jun, 12:35
+
+
+
+
+ORD = LOAD'/home/itelligence/Dataset/CSV/orders.csv' USING PigStorage(',') as (OrderID:chararray,CustomerID:chararray,Company:chararray,CompanyAddress:chararray,
+CompanyCity:chararray,CompanyState:chararray,CompanyZip:chararray,
+OrderContact:chararray,DeliveryAddress:chararray,DeliveryCity:chararray,
+DeliveryState:chararray,PaymentType:chararray,PaymentTerms:chararray,
+Title:chararray,DeliveryOption:chararray,DeliveryVendor:chararray,
+ConfirmationCode:chararray,OrderAmount:chararray,OrderType:chararray,
+ProductDescription:chararray);
+
+A = FOREACH ORD GENERATE $0,$17;
+
+B = FILTER A BY $1 MATCHES '\\$.*';
+OR
+B = FILTER A BY SUBSTRING($1,0,1) == '$';
+
+A1 = FOREACH ORD GENERATE $0,$18;
+B1 = FILTER A1 BY SUBSTRING($1,0,1) == '$';
+
+A2 = FOREACH ORD GENERATE $0,$19;
+B2 = FILTER A2 BY SUBSTRING($1,0,1) == '$';
+
+C = UNION B,B1,B2;
+
+D =  FILTER C BY (INT)SUBSTRING($1,1,20)) > 400;
+
+DUMP D;
+
+https://drive.google.com/open?id=1vFHLgmJL9uLGtBlz7xrsw06fJV9igpzl
+
+Vaibhav Bajaj • 24 Jun, 13:22
+
+
+
+
+OrderID,CustomerID,Company,CompanyAddress,CompanyCity,CompanyState,CompanyZip,OrderContact,DeliveryAddress,DeliveryCity,DeliveryState,PaymentType,PaymentTerms,Title,DeliveryOption,DeliveryVendor,ConfirmationCode,OrderAmount,OrderType,ProductDescription
+O-5079,10110085,JOSEPHTHAL LYON & ROSS,96 FISHER ROAD,MAHWAH,NJ,7430,PARKE PERSLEY OR RAYFORD LECROY,96 FISHER ROAD,MAHWAH,NJ,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44162,$21.00 ,Generic,O/L/B P/W L/S TAWNY SHIMMER .08 OZ.
+O-6658,10110086,NRCA,10255 W.HIGGINS RD.,ROSEMONT,IL,60018-5607,ROLANDA SORTO,10255 W.HIGGINS RD.,ROSEMONT,IL,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44163,$56.40 ,Generic,O-L.B PW LIPSTYLO LASTING PERFECTION .08 OZ.
+O-8195,10110087,POND EQUITIES,4522 FT. HAMILTON PKWY.,BROOKLYN,NY,11219,KONSTANTIN PEDDICORD,4522 FT. HAMILTON PKWY.,BROOKLYN,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44164,$78.00 ,Generic,O/L/B P/W L/S TAWNY SHIMMER LASTING PERFECTION LIPSTYLO TAWNY SHIMMER .08 OZ.
+O-9130,10110088,SCHRODER & COMPANY,787 SEVENTH AVENUE,NEW YORK,NY,10019,GIORGIA TWITCHELL,787 SEVENTH AVENUE,NEW YORK,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44165,$14.00 ,Generic,A/COL L PERFECTION L/S REF P SUPREME LASTING PERFECTION LIPSTYLO TAWNY SHIMMER .08 OZ.
+O-9352,10110089,YUASA TRADING COMPANY (AMERICA),150 EAST 52ND STREET,NEW YORK,NY,10005,STEFFI MCGLOWN,150 EAST 52ND STREET,NEW YORK,NY,American Express,CHARGE,Account Executive,UPA,United Parcel Service Air,44166,$54.00 ,Generic,O/L/B L PERFECTION REF LIPSTYLO COFFEE PEACH SUPREME .08 OZ.
+O-9517,10110090,DAI ICHI KANGYO BANK,1 WORLD TRADE CENTRE SUITE 49 - 11,NEW YORK,NEW YORK,10048,AIKEN DOBRICK,1 WORLD TRADE CENTRE SUITE 49 - 11,NEW YORK,NEW YORK,American Express,CHARGE,Account Executive,UPR,United Parcel Service Red,44167,$58.00 ,Generic,LASTING PERFECTION LIP COLOR HOLLYWOOD GLAMOUR 1.7 G MAUVE ICE #752
+
+Vaibhav Bajaj • 24 Jun, 14:02
+
+
+
+
+PARTITIONING
+
+enable dynamic partitioning
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create partitioned emp table
+
+CREATE TABLE EMP_PART
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT
+)
+PARTITIONED BY (DEPARTMENT_ID INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD PARTITIONED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_PART PARTITION(DEPARTMENT_ID)
+SELECT * FROM EMP;
+
+Vaibhav Bajaj • 30 Jun, 12:54
+
+
+
+
+PARTITIONING
+
+enable dynamic partitioning
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create partitioned emp table
+
+CREATE TABLE EMP_PART2
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT
+)
+PARTITIONED BY (MANAGER_ID INT,DEPARTMENT_ID INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD PARTITIONED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_PART2 PARTITION(MANAGER_ID,DEPARTMENT_ID)
+SELECT * FROM EMP;
+
+BUCKETING
+
+enable BUCKETING
+
+set hive.enforce.bucketing=true;
+
+STEP1
+CREATE EMP TABLE AND LOAD EMP.csv into it
+
+Step2
+create bucketed emp table
+
+CREATE TABLE EMP_BUCKETED
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+CLUSTERED BY (DEPARTMENT_ID) INTO 4 BUCKETS
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+STEP 3
+LOAD BUCKETED TABLE FROM EMP TABLE
+
+INSERT OVERWRITE TABLE EMP_BUCKETED
+SELECT * FROM EMP;
+
+Vaibhav Bajaj • 30 Jun, 13:39
+
+
+
+
+"REVISION AGAINST GENUINE REVIEW"People who want to join revision sessions and have posted reviews kindly click on this link to join the sessions.
+https://hangouts.google.com/group/qfytKm1OvdxmQA8h2
+Review links: 1. Google 
+http://search.google.com/local/writereview?placeid=ChIJC0EnkB-5wjsRt2knHOGO7oU
+
+https://www.urbanpro.com/providerRecommendation/fillRecommendation?branchId=235758&fromProfile=fromProfile
+https://www.facebook.com/pg/etlhive/reviews/
+
+Vaibhav Bajaj • 30 Jun, 16:15
+
+
+
+
+==================SEQUENCE FILE================
+KEY VALUE
+
+COMPRESSION
+
+FASTER SORTING AND GROUPING
+==================RC==========================
+
+RCFile (Record Columnar File)
+RCFile stores table data in a flat file consisting of binary key/value pairs. 
+
+It first partitions rows horizontally into row splits 
+
+Then it vertically partitions each row split in a columnar way. 
+
+RCFile stores the metadata of a row split as the key part of a record, and all the data of a row split as the value part.
+
+As row-store, RCFile guarantees that data in the same row are located in the same node.
+
+As column-store, RCFile can exploit column-wise data compression and skip unnecessary column reads.
+
+==================ORC==========================
+ORC file format advantages:
+
+a single file as the output of each task, which reduces the NameNode's load
+
+Hive type support including datetime, decimal, and the complex types (struct, list, map, and union)
+
+light-weight indexes stored within the file
+
+skip row groups that don't pass predicate filtering
+
+seek to a given row
+
+concurrent reads of the same file using separate RecordReaders
+ability to split files without scanning for markers
+bound the amount of memory needed for reading or writing
+
+metadata stored using Protocol Buffers, which allows addition and removal of fields
+
+
+CREATE TABLE ... STORED AS ORC
+
+ALTER TABLE ... [PARTITION partition_spec] SET FILEFORMAT ORC
+
+SET hive.default.fileformat=Orc
+
+create table Addresses (
+ name string,
+ street string,
+ city string,
+ state string,
+ zip int
+) stored as orc;
+
+====================AVRO========================
+Rich data structures.
+A compact, fast, binary data format.
+A container file, to store persistent data.
+Remote procedure call (RPC).
+Simple integration with dynamic languages. Code generation is not required to read or write data files nor to use or implement RPC protocols. Code generation as an optional optimization, only worth implementing for statically typed languages.
+
+CREATE TABLE emp_AVRO
+ ROW FORMAT SERDE
+
+Vaibhav Bajaj • 1 Jul, 13:03
+
+
+
+
+EMP.orc  ==>  EMP_ORC
+
+EMP.csv  ==> X(NOT ALLOWED)  EMP_ORC
+
+EMP.csv ==> EMP(TABLE) ==> EMP_ORC
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/EMP.csv'
+INTO TABLE EMP;
+
+
+CREATE TABLE EMP_SEQ
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+STORED AS SEQUENCEFILE;
+
+INSERT OVERWRITE TABLE EMP_SEQ
+SELECT * FROM EMP;
+
+
+CREATE TABLE EMP_RC
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT,DEPARTMENT_ID INT
+)
+STORED AS RCFILE;
+
+INSERT OVERWRITE TABLE EMP_RC
+SELECT * FROM EMP;
+
+Vaibhav Bajaj • 1 Jul, 13:26
+
+Malaya has left the Hangout.
+7 Jul, 11:31
+
+
+
+
+===========AVRO TABLE============
+
+AVROSERDE
+READER CLASS
+WRITER CLASS
+SCHEMA FILE(JSON)(hdfs)
+
+=======================
+create EMP table
+
+CREATE TABLE EMP
+(
+EMPLOYEE_ID int,FIRST_NAME string,LAST_NAME string,EMAIL string,PHONE_NUMBER string,HIRE_DATE string,JOB_ID string,SALARY int,MANAGER_ID int,DEPARTMENT_ID int
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+-----------------------------------------
+
+load data into emp table
+
+load data local inpath'/home/itelligence/Dataset/CSV/EMP.csv'
+into table emp;
+-----------------------------------------
+create schema file
+
+{
+ "namespace": "default",
+ "type":"record",
+ "name":"emp_avro",
+ "fields": [
+   {"name":"EMPLOYEE_ID","type":["int","null"]},
+   {"name":"FIRST_NAME","type":"string"},
+   {"name":"LAST_NAME","type":"string"},
+   {"name":"EMAIL","type":"string"},
+   {"name":"PHONE_NUMBER","type":"string"},
+   {"name":"HIRE_DATE","type":"string"},
+   {"name":"JOB_ID","type":"string"},
+   {"name":"SALARY","type":["int","null"]},
+   {"name":"MANAGER_ID","type":["int","null"]},
+   {"name":"DEPARTMENT_ID","type":["int","null"]}
+ ]
+}
+-----------------------------------------
+COPY AVRO SCHEMA FILE TO HDFS
+
+hadoop fs -put /home/itelligence/Desktop/avro_schema.json   /data/schema/avro_schema.json
+
+-----------------------------------------
+
+create avro table
+
+CREATE TABLE emp_AVRO
+ ROW FORMAT SERDE
+ 'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+ STORED AS INPUTFORMAT
+ 'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+ OUTPUTFORMAT
+ 'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+ TBLPROPERTIES (
+   'avro.schema.url'='hdfs://localhost:8020/data/schema/avro_schema.json');
+
+-----------------------------------------
+
+load data from emp table to avro table
+
+INSERT OVERWRITE TABLE EMP_AVRO
+SELECT * FROM EMP;
+
+Vaibhav Bajaj • 7 Jul, 12:41
+
+
+
+
+https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions
+
+Vaibhav Bajaj • 7 Jul, 13:39
+
+
+
+
+
+CREATE TABLE emp_regex2
+(
+fn string,
+ln string,
+city STRING,
+sal string
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.RegexSerDe'
+WITH SERDEPROPERTIES (
+ "input.regex" = "(.*) (.*),(.*):(.*)"
+);
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/MULTIPLE_DELIMITERS.txt'
+INTO TABLE EMP_REGEX2;
+
+Vaibhav Bajaj • 7 Jul, 14:02
+
+Vaibhav added Utkarsh Belekar, DRASHTI MEHTA and Varsha Gaiwal to the Hangout.
+7 Jul, 14:05
+
+
+
+Sir when in the weekday batch for spark starting?
+
+9 Jul, 16:52
+
+
+
+
+31st July 7:45AM
+
+Vaibhav Bajaj • 10 Jul, 10:36
+
+
+
+Thanks...
+
+10 Jul, 11:13
+
+
+
+
+Sir what time is the revision class on this weekend?
+
+Yashovardhan • 10 Jul, 11:15
+
+
+
+
+let me update you by today eod
+
+Vaibhav Bajaj • 10 Jul, 11:19
+
+
+
+
+Hello Sir, request your confirmation on revision session timings...
+
+Yashovardhan • 13 Jul, 10:49
+
+
+Vaibhav added Rachna Dua to the Hangout.
+14 Jul, 12:36
+
+
+
+
+CREATE TABLE EMP_STATIC
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT
+)
+PARTITIONED BY (DEPARTMENT_ID INT)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/50.csv'
+INTO TABLE EMP_STATIC PARTITION (DEPARTMENT_ID = 50);
+OR
+INSERT OVERWRITE TABLE EMP_STATIC PARTITION(DEPARTMENT_ID = 70)
+SELECT * FROM EMP WHERE DEPARTMENT_ID = 70;
+
+Vaibhav Bajaj • 14 Jul, 12:37
+
+Vaibhav added Neha Garg to the Hangout.
+14 Jul, 12:37
+
+
+
+
+package myudfs;
+import org.apache.hadoop.hive.ql.exec.UDF;
+import org.apache.hadoop.io.Text;
+class toUpper extends UDF {
+public Text evaluate(Text a) 
+{
+   if(a == null) return null;
+   return new Text(a.toString().toUpperCase());
+ }
+}
+=======================
+ADD JAR /home/itelligence/Desktop/hive_udf.jar;
+
+CREATE TEMPORARY FUNCTION UP as 'myudfs.ToUpper';
+
+select UP(name) 
+from emp;
+
+Vaibhav Bajaj • 14 Jul, 13:05
+
+
+
+
+pig -x local /home/itelligence/Desktop/programs/Pig/ORD.pig
+
+hive -f /home/itelligence/Desktop/hive_script.hql
+
+CREATE TABLE ORD
+(
+OrderID STRING,CustomerID STRING,Company STRING,CompanyAddress STRING,CompanyCity STRING,CompanyState STRING,CompanyZip STRING,OrderContact STRING,DeliveryAddress STRING,DeliveryCity STRING,DeliveryState STRING,PaymentType STRING,PaymentTerms STRING,Title STRING,DeliveryOption STRING,DeliveryVendor STRING,ConfirmationCode STRING,OrderAmount STRING,OrderType STRING,ProductDescription STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',' 
+LINES TERMINATED BY '\n';
+
+LOAD DATA LOCAL INPATH'/home/itelligence/Dataset/CSV/orders.csv'
+INTO TABLE ORD;
+
+select * from ord;
+
+Vaibhav Bajaj • 14 Jul, 13:35
+
+
+
+
+class AVGSAL
+{
+ class AVGSALMAPPER extends MapReduceBase implements Mapper<LongWritable,Text,Text,IntWritable>
+ {
+    map(LongWritable BO,Text chunk,OuputCollector<Text,IntWritable> OM)
+    {
+      String[] a = chunk.toString().split(',');
+      OM.collect(new Text(a[9]),new IntWritable(Integer.ParseInt(a[7])));
+    }
+ }
+ 
+ class AVGSALREDUCER extends MapReduceBase implements Reducer<Text,IntWritable,Text,IntWritable>
+ {
+    reduce(Text key,Iterator<IntWritable> SOV,OutputCollector<Text,IntWritable> RO)
+    {
+    int sum = 0;
+    int count = 0;
+    
+      while(SOV.hasNext())
+      {
+        sum = sum + SOV.next().get();
+        count ++;
+      }
+      RO.collect(key,new IntWritable(sum/count));
+    }
+ }
+ 
+ public static void main(String[] args)
+ {
+   JobConf a = new JobConf(AVGSAL.class);
+   a.setJobName("AVERAGE SAL DEPT WISE");
+   
+   a.setMapperClass(AVGSALMAPPER.class);
+   a.setReducerClass(AVGSALREDUCER.class);
+   
+   a.setOutputKeyClass(Text.class);
+   a.setOutputValueClass(IntWtitable.class);
+   
+   FileInputFormat.addInputPath(a,new Path(args[0]));
+   FileOutputFormat.setOutputPath(a,new Path(args[1])); 
+   
+   JobClient.runJob(a);   
+   
+ 
+ }
+}
+
+========INPUT=========
+
+103,Alexander,Hunold,AHUNOLD,590.423.4567,03-JAN-90,IT_PROG,9000,102,60
+104,Bruce,Ernst,BERNST,590.423.4568,21-MAY-91,IT_PROG,6000,103,60
+105,David,Austin,DAUSTIN,590.423.4569,25-JUN-97,IT_PROG,4800,103,60
+106,Valli,Pataballa,VPATABAL,590.423.4560,05-FEB-98,IT_PROG,4800,103,60
+107,Diana,Lorentz,DLORENTZ,590.423.5567,07-FEB-99,IT_PROG,4200,103,60
+
+========SPLIT=========
+
+BO,{CHUNK}
+LongWritable,Text
+BO,(103,Alexander,Hunold,AHUNOLD,590.423.4567,03-JAN-90,IT_PROG,9000,102,60)
+
+========MAP=========
+
+KEY,VALUE
+Text,IntWritable
+DEPARTMENT_ID,SALARY
+
+60,9000
+
+========SHUFFLE/SORT=========
+
+KEY,{SOV}
+Text,IntWritable
+60,{2000,6000,4000,9000}
+
+========REDUCE=========
+
+KEY,{AGGREGATED VALUE}
+Text,IntWritable
+60,5250
+
+========OUTPUT=========
+Text,IntWritable
+PART-00000
+60,5250
+=====================
+
+Vaibhav Bajaj • 15 Jul, 13:45
+
+
+
+
+Hi
+
+Ashok • 21 Jul, 09:02
+
+
+
+
+=============JOINS IN HIVE============
+
+CREATE TABLE DEPT 
+(
+DID INT,
+DNAME STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+load data local inpath'/home/itelligence/Dataset/CSV/DEPT.csv'
+into table dept;
+---INNER---
+SELECT *
+FROM EMP JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+---LEFT OUTER---
+SELECT *
+FROM EMP LEFT OUTER JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+---RIGHT OUTER---
+SELECT *
+FROM EMP RIGHT OUTER JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+---FULL OUTER---
+SELECT *
+FROM EMP FULL OUTER JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+---LEFT SEMI---
+
+SELECT EMP.*
+FROM EMP JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+
+EQ
+
+SELECT *
+FROM EMP LEFT SEMI JOIN DEPT
+ON (EMP.DEPARTMENT_ID = DEPT.DID);
+
+Vaibhav Bajaj • 21 Jul, 09:03
+
+
+
+
+https://drive.google.com/open?id=1KkUne7Il527SdplcZPfPVNP7J6VbW_gx
+
+Vaibhav Bajaj • 21 Jul, 09:26
+
+
+
+
+SELECT *
+FROM(
+SELECT ORDERID,ORDERAMOUNT AS A
+FROM ORD
+WHERE ORDERAMOUNT LIKE '$%'
+UNION ALL
+SELECT ORDERID,ordertype AS A
+FROM ORD
+WHERE ordertype LIKE '$%'
+UNION ALL
+SELECT ORDERID,productdescription AS A
+FROM ORD
+WHERE productdescription LIKE '$%')W
+WHERE SUBSTRING(A,2,LENGTH(A)-1) > 200 AND SUBSTRING(A,2,LENGTH(A)-1) < 400;
+
+Vaibhav Bajaj • 21 Jul, 09:57
+
+
+
+
+Hi..Today class at 12 right?
+
+Rachna • 21 Jul, 11:13
+
+
+
+
+yes
+
+Vaibhav Bajaj • 21 Jul, 11:56
+
+
+
+
+import java.io.IOException;
+import java.util.*;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.*;
+
+public class AVGSAL
+{
+ public static class AVGSALMAPPER extends MapReduceBase implements Mapper<LongWritable,Text,Text,IntWritable>
+ {
+   public void map(LongWritable BO,Text CHUNK,OutputCollector<Text,IntWritable> OM, Reporter reporter) throws IOException
+    {
+      String[] a = CHUNK.toString().split(",");
+      
+      OM.collect(new Text(a[9]),new IntWritable(Integer.parseInt(a[7])));
+      
+    }
+ }
+ 
+ static class AVGSALREDUCER extends MapReduceBase implements Reducer<Text,IntWritable,Text,IntWritable>
+ {
+ public void reduce(Text did,Iterator<IntWritable> SOV,OutputCollector<Text,IntWritable> RO, Reporter reporter) throws IOException
+   {
+      int sum = 0;
+      int ct = 0;
+      
+      while(SOV.hasNext())
+      {
+        sum = sum + SOV.next().get();
+        ct++;
+      }
+      
+      RO.collect(did,new IntWritable(sum/ct));
+      
+      
+   }
+ }
+ 
+ public static void main(String[] args) throws IOException
+ {
+   JobConf a = new JobConf(AVGSAL.class);
+   a.setJobName("AVG SAL CALC");
+   
+   a.setMapperClass(AVGSALMAPPER.class);
+   a.setReducerClass(AVGSALREDUCER.class);
+   
+   a.setOutputKeyClass(Text.class);
+   a.setOutputValueClass(IntWritable.class);
+   
+   FileInputFormat.addInputPath(a,new Path(args[0]));
+   FileOutputFormat.setOutputPath(a,new Path(args[1]));
+   
+   JobClient.runJob(a);
+ }
+
+}
+
+Vaibhav Bajaj • 21 Jul, 12:58
+
+
+
+
+import java.io.IOException;
+import java.util.*;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.*;
+
+public class UPPER
+{
+ public static class AVGSALMAPPER extends MapReduceBase implements Mapper<LongWritable,Text,Text,Text>
+ {
+   public void map(LongWritable BO,Text CHUNK,OutputCollector<Text,Text> OM, Reporter reporter) throws IOException
+    {
+      String[] a = CHUNK.toString().split(",");
+      
+      OM.collect(new Text(a[1]),new Text(a[1].toUpperCase()));
+      
+    }
+ }
+ 
+ 
+ public static void main(String[] args) throws IOException
+ {
+   JobConf a = new JobConf(AVGSAL.class);
+   a.setJobName("AVG SAL CALC");
+   
+   a.setMapperClass(AVGSALMAPPER.class);
+ 
+   
+   a.setOutputKeyClass(Text.class);
+   a.setOutputValueClass(Text.class);
+   
+   FileInputFormat.addInputPath(a,new Path(args[0]));
+   FileOutputFormat.setOutputPath(a,new Path(args[1]));
+   
+   JobClient.runJob(a);
+ }
+
+}
+
+import java.io.IOException;
+import java.util.*;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapred.*;
+
+public class FILTERING
+{
+ public static class AVGSALMAPPER extends MapReduceBase implements Mapper<LongWritable,Text,Text,Text>
+ {
+   public void map(LongWritable BO,Text CHUNK,OutputCollector<Text,Text> OM, Reporter reporter) throws IOException
+    {
+      String[] a = CHUNK.toString().split(",");
+      
+      if(Integer.parseInt(a[7]) > 5000 && Integer.parseInt(a[7]) < 10000 )
+      OM.collect(new Text(a[1]),new Text(a[1].concat(" " + a[2]).concat(" " + a[7])));
+      
+    }
+ }
+ 
+ 
+ public static void main(String[] args) throws IOException
+ {
+   JobConf a = new JobConf(FILTERING.class);
+   a.setJobName("AVG SAL CALC");
+   
+   a.setMapperClass(AVGSALMAPPER.class);
+ 
+   a.setOutputKeyClass(Text.class);
+   a.setOutputValueClass(Text.class);
+   
+   FileInputFormat.addInputPath(a,new Path(args[0]));
+   FileOutputFormat.setOutputPath(a,new Path(args[1]));
+   
+   JobClient.runJob(a);
+ }
+
+}
+
+Vaibhav Bajaj • 21 Jul, 13:54
+
+
+
+
+Hi folks, our class to start from 12:15Pm today
+
+Vaibhav Bajaj • 22 Jul, 10:47
+
+
+
+
+EXPORT YOUR PROJECT IN ECLIPSE INTO JAR FILE
+
+hadoop fs -put /home/itelligence/Dataset/CSV/EMP1.csv /data2/data/EMP.csv
+
+hadoop jar <path to jar file> <packagename.classname> <args>
+
+hadoop jar /home/itelligence/Desktop/CLUSTER_MODE.jar UPPER /data2/data/EMP.csv /data2/op/UPPER/
+
+Vaibhav Bajaj • 22 Jul, 13:16
+
+
+
+
+New tableau batch starting tomorrow at 6:30PM, Interested people can join batch by using this link: https://hangouts.google.com/group/I7NXbshfGg68Rqp13   
+
+Vaibhav Bajaj • 27 Jul, 10:26
+
+
+
+
+Hello sir..do we have revision session today?
+
+Sanket • 28 Jul, 11:27
+
+
+
+
+ip:192.168.56.102
+netmask:255.255.255.0
+gateway:192.168.56.101
+
+Vaibhav Bajaj • 28 Jul, 13:59
+
+
+
+
+https://drive.google.com/file/d/1LxpP_Z1fu1sQSFycUgoEn2IK2JaOqJoe/view?usp=sharing
+
+Vaibhav Bajaj • 29 Jul, 13:06
+
+
+
+
+sqoop import --connect jdbc:mysql://localhost:3306/vaibhav --username root --password hr  --split-by 'EMPLOYEE_ID' --table employees --hive-table employees --hive-import
+
+Vaibhav Bajaj • 29 Jul, 15:50
+
+
+
+
+Sir, Do we have Spark class tomorrow morning.
+
+anish • 30 Jul, 20:27
+
+
+
+
+7:45AM
+
+Vaibhav Bajaj • 30 Jul, 20:41
+
+
+
+
+Is laptop needed in tomorrow class
+
+Surbhi • 30 Jul, 20:42
+
+
+
+
+Thanks
+
+anish • 30 Jul, 20:45
+
+
+
+Sir spark batch is starting tomorrow?
+
+30 Jul, 21:57
+
+
+
+
+Ok
+
+Akash putti • 31 Jul, 07:14
+
+
+
+
+Ok
+
+Rachna • 31 Jul, 07:16
+
+
+
+
+Ok
+
+virendra • 31 Jul, 07:16
+
+
+
+
+We 2-3 folks already reached here
+
+Tomorrow?
+
+Ashok • 31 Jul, 07:41
+
+
+
+
+I was also reached and came back
+
+virendra • 31 Jul, 07:42
+
+
+
+
+Will it start tomorrow?
+
+Ashok • 31 Jul, 07:42
+
+
+
+
+Hello Sir,How are you. Do we have lecture tomorrow?
+
+virendra gandhi • 31 Jul, 19:36
+
+
+
+
+Lets start tomorrow by 8am
+
+Hi folks, those who are interested in joining spark weekdays batch from tomorrow 8am can click on the link to join hangouts group: https://hangouts.google.com/group/VokgKfl9EJzm1qxJ2
+
+Vaibhav Bajaj • 31 Jul, 21:41
+
+
+
+
+Will there be any weekend batch too?
+
+Saurabh • 31 Jul, 21:56
+
+
+
+
+Yes, 8Pm rahega, 2nd week of august
+
+Vaibhav Bajaj • 31 Jul, 21:57
+
+
+
+
+Okay. 8PM not 8AM right?
+
+Saurabh • 31 Jul, 21:58
+
+
+
+
+PM..raat ko
+
+Vaibhav Bajaj • 31 Jul, 21:58
+
+
+
+
+Ok sir
+
+Saurabh • 31 Jul, 21:59
+
+
+
+
+Hi Vaibhav..I have missed classes from hive sessions. Are there any classes in kharadi location for CBS?
+
+shamali.goski@gmail.com • 31 Jul, 22:06
+
+
+
+
+You can come to Pimple branch for that at 10AM on next weekend
+
+Hi folks, announcing new spark weekends batch
+starting 8PM, initially planned on starting it from this weekend,  but due to time slot issues I'd need to take it from next weekend 8PM-10PM ie 11th August.
+
+Interested folks can click on this link to join group: 
+
+https://hangouts.google.com/group/cgoYThXrnJBYeaMB3
+
+.......
+
+____________________________________________________
+
+Hi folks, announcing new spark weekends batch
+starting 8PM, initially planned on starting it from this weekend,  but due to time slot issues I'd need to take it from next weekend 8PM-10PM ie 11th August.
+
+Interested folks can click on this link to join group: 
+
+https://hangouts.google.com/group/cgoYThXrnJBYeaMB3
+
+Vaibhav Bajaj • 3 Aug, 15:32
+
+
+
+
+12 PM CBS
+
+Yashovardhan • 4 Aug, 14:28
+
+
+
+
+hi
+
+Anubha • 4 Aug, 14:28
+
+
+
+
+https://search.google.com/local/writereview?placeid=ChIJCSvHSIq5wjsRN3AaGftQegc
+
+Vaibhav Bajaj • 4 Aug, 14:28
+
+
+
+
+import
+--connect
+jdbc:mysql://localhost:3306/vaibhav
+--username
+root
+--password
+hr
+
+Exports may fail for a number of reasons:
+
+   Loss of connectivity from the Hadoop cluster to the database (either due to hardware fault, or server software crashes)
+   Attempting to INSERT a row which violates a consistency constraint (for example, inserting a duplicate primary key value)
+   Attempting to parse an incomplete or malformed record from the HDFS source data
+   Attempting to parse records using incorrect delimiters
+   Capacity issues (such as insufficient RAM or disk space) 
+
+If an export map task fails due to these or other reasons, it will cause the export job to fail. The results of a failed export are undefined. Each export map task operates in a separate transaction. Furthermore, individual map tasks commit their current transaction periodically. If a task fails, the current transaction will be rolled back. Any previously-committed transactions will remain durable in the database, leading to a partially-complete export.
+
+Vaibhav Bajaj • 4 Aug, 15:00
+
+Missed call from Vikas
+4 Aug, 15:18
+
+
+
+
+https://stackoverflow.com/questions/30637536/how-to-load-csv-data-with-enclosed-by-double-quotes-and-separated-by-tab-into-hi
+
+
+https://stackoverflow.com/questions/48395999/hive-parquet-snappy-compression-not-working
+
+https://stackoverflow.com/questions/32350664/why-is-parquet-slower-for-me-against-text-file-format-in-hive?rq=1
+
+https://stackoverflow.com/questions/33551878/hive-doesnt-read-partitioned-parquet-files-generated-by-spark
+
+https://stackoverflow.com/questions/51681268/ingesting-json-data-into-hive-using-json-serde
+
+https://stackoverflow.com/questions/44877175/parse-xml-in-hive
+
+testing in hive
+
+https://cwiki.apache.org/confluence/display/Hive/Unit+Testing+Hive+SQL
+
+Vaibhav Bajaj • 5 Aug, 13:34
+
+
+
+
+https://drive.google.com/open?id=1JL9HOvLHjJW1Yg7YtqzJDxPmtk1Ac4Q8
+
+Vaibhav Bajaj • 5 Aug, 14:15
+
+
+
+
+EMP = LOAD'/home/itelligence/Dataset/xml/DATA_EMP.xml' USING org.apache.pig.piggybank.storage.XMLLoader('ROW');
+
+A = FOREACH EMP GENERATE FLATTEN(REGEX_EXTRACT_ALL($0,'<ROW>\\s*<EMPLOYEE_ID>(.*)</EMPLOYEE_ID>\\s*<FIRST_NAME>(.*)</FIRST_NAME>\\s*<LAST_NAME>(.*)</LAST_NAME>\\s*<EMAIL>(.*)</EMAIL>\\s*<PHONE_NUMBER>(.*)</PHONE_NUMBER>\\s*<HIRE_DATE>(.*)</HIRE_DATE>\\s*<JOB_ID>(.*)</JOB_ID>\\s*<SALARY>(.*)</SALARY>\\s*<MANAGER_ID>(.*)</MANAGER_ID>\\s*<DEPARTMENT_ID>(.*)</DEPARTMENT_ID>\\s*</ROW>'));
+
+STORE A INTO '$PATH' using PigStorage('|');
+
+pig -x local -param PATH=/home/itelligence/d4  /home/itelligence/Desktop/pig_xml.pig
+
+Vaibhav Bajaj • 5 Aug, 15:22
+
+
+
+
+Hi Sir, request you to confirm tomorrow's schedule for the class...how many sessions we will have tomorrow of hadoop
+
+Apart from 8.00 pm spark
+
+Yashovardhan • 10 Aug, 13:14
+
+
+
+
+Hi folks, our session scheduled at 12PM on Sunday for NoSQL and remaining topics
+
+No class on 12PM for Saturday
+
+and revision sessions will be taken on 3Pm on Saturday and 2PM on sunday
+
+Vaibhav Bajaj • 10 Aug, 14:11
+
+
+
+
+Sir do we have DS demo session on Saturday 12PM
+
+anish • 10 Aug, 14:12
+
+
+
+
+yes
+
+Vaibhav Bajaj • 10 Aug, 14:12
+
+
+
+
+Ok
+
+Thx
+
+anish • 10 Aug, 14:12
+
+
+
+
+Is there a batch at 8am.. ?
+
+Priya • 10 Aug, 14:13
+
+
+
+
+Is thr any class for Map R tomorrow?
+
+Utkarsh • 10 Aug, 14:13
+
+
+
+
+8am
+
+Vaibhav Bajaj • 10 Aug, 14:14
+
+
+
+
+I want to attend it fomap reduce and hive
+
+Priya • 10 Aug, 14:14
+
+
+
+
+Hi folks, let everone see this message, if you have queries, post it to them in person
+
+Vaibhav Bajaj • 10 Aug, 14:14
+
+
+
+
+I have missed all the consecutive classes from pig..When can I rejoin in a new batch?
+
+shamali.goski@gmail.com • 10 Aug, 14:14
+
+
+
+
+??
+
+@shamali: JOIN IN 4PM STARTING FROM SATURDAY
+
+Hi folks, our session scheduled at 12PM on Sunday for NoSQL and remaining topics
+**No class on 12PM for Saturday**
+and revision sessions will be taken on 3Pm on Saturday and 2PM on sunday
+
+donot POST ON GROUP
+
+LET EVERYONE SEE THIS MESSAGE
+
+Vaibhav Bajaj • 10 Aug, 14:17
+
+
+
+
+Hi Vaibhav sir
+
+Leena • 11 Aug, 09:11
+
+
+
+
+Hi folks, a little miscommunication has occured from my side here, Your revision class is scheduled at 12PM today instead of 3PM. Inconvinience reretted!
+
+Vaibhav Bajaj • 11 Aug, 09:13
+
+
+
+
+Hi Sir, Spark is starting today at 8 PM ?
+
+Saurabh • 11 Aug, 16:44
+
+
+
+
+yes but only for those who joined group
+
+Vaibhav Bajaj • 11 Aug, 17:17
+
+
+
+
+-------table creation-----
+
+create table t1
+(
+word string
+);
+
+-------load data----------
+
+load data local inpath'/home/itelligence/Dataset/classification_data/data/snapdeal'
+into table t1;
+
+-------temporary table creation after spliting data------------
+
+create table t2
+as
+select explode(split(word," ")) as a
+from t1;
+
+--------finding aggregates--------------------
+
+select a,count(*)
+from t2
+group by a;
+
+=================SUBSTITUTE================
+
+select a,count(*)
+from (select explode(split(word," ")) as a from t1)Q
+group by a;
+
+Vaibhav Bajaj • 12 Aug, 12:31
+
+
+
+
+CREATE TABLE EMP_PART_BUCKET_2
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT
+)
+PARTITIONED BY (DEPARTMENT_ID INT)
+CLUSTERED BY (MANAGER_ID) INTO 3 BUCKETS
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+INSERT OVERWRITE TABLE EMP_PART_BUCKET_2 PARTITION(DEPARTMENT_ID)
+SELECT * FROM EMP;
+
+===========================
+
+CREATE TABLE EMP_PART_BUCKET_3
+(
+EMPLOYEE_ID INT,FIRST_NAME STRING,LAST_NAME STRING,EMAIL STRING,PHONE_NUMBER STRING,HIRE_DATE STRING,JOB_ID STRING,SALARY INT,MANAGER_ID INT
+)
+PARTITIONED BY (DEPARTMENT_ID INT)
+CLUSTERED BY (MANAGER_ID) INTO 3 BUCKETS
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+STORED AS RCFILE;
+
+INSERT OVERWRITE TABLE EMP_PART_BUCKET_3 PARTITION(DEPARTMENT_ID)
+SELECT * FROM EMP;
+
+Vaibhav Bajaj • 12 Aug, 12:51
+
+
+
+
+select emp.*,dept.*
+from emp join dept
+on(emp.department_id = dept.department_id);
+============================================
+
+select emp.*
+from emp join dept
+on(emp.department_id = dept.department_id);
+
+EQUIVALENT
+
+select *
+from emp left semi join dept
+on(emp.department_id = dept.department_id);
+============================================
+
+Vaibhav Bajaj • 12 Aug, 13:10
+
+
+
+
+
+==========================DATA INGESTION=======================
+Do this outside the mongo prompt:
+
+mongoimport --db etlhive --collection emp --type csv --headerline --file /home/itelligence/Dataset/CSV/EMP.csv 
+
+Do this on mongo prompt:
+Go to mongo prompt using:
+
+mongo
+
+use etlhive
+show collections
+db.emp.find()
+
+type "it" to see more wala data
+========================DROP COLLECTION/database=========================
+
+db.emp.drop();
+db.dropDatabase();
+
+========================insert into command======================
+
+db.emp.insert({ "EMPLOYEE_ID" : 159, "FIRST_NAME" : "Lindsey", "LAST_NAME" : "Smith", "EMAIL" : "LSMITH", "PHONE_NUMBER" : "011.44.1345.729268", "HIRE_DATE" : "10-MAR-97", "JOB_ID" : "SA_REP", "SALARY" : 8000, "MANAGER_ID" : 146, "DEPARTMENT_ID" : 80, "LUNCH_CODE" : 102, "CITY" : "PUNE" }
+);
+
+db.emp.find({},{FIRST_NAME:1,LAST_NAME:1,LUNCH_CODE:1,_id:0})
+=======================UPDATE======================
+db.emp.update({ EMPLOYEE_ID: 102 },{$set: {SALARY: 20000}})
+
+db.emp.find({
+   EMPLOYEE_ID: 102
+}, {
+   FIRST_NAME: 1,
+   LAST_NAME: 1,
+   SALARY: 1
+});
+
+db.emp.find({
+   EMPLOYEE_ID: 102
+});
+
+db.emp.find({SALARY:{$gt:5000}},{FIRST_NAME:1,LAST_NAME:1,_id:0,SALARY:1});
+
+db.emp.find({"FIRST_NAME":"A%"},{FIRST_NAME:1,LAST_NAME:1,_id:0,SALARY:1});
+
+=====================DELETE==================
+
+db.emp.remove({ EMPLOYEE_ID: 102 })
+
+=======================================================================
+
+mongoexport --db 2PM --collection emp --csv --fields EMPLOYEE_ID,FIRST_NAME,LAST_NAME,EMAIL,PHONE_NUMBER,MANAGER_ID,DEPARTMENT_ID --out /home/itelligence/Desktop/exported_mongo9.csv
+
+mongoexport --db 9am --collection emp --csv --fields EMPLOYEE_ID,FIRST_NAME,LAST_NAME,EMAIL,PHONE_NUMBER,HIRE_DATE,JOB_ID,SALARY,MANAGER_ID,DEPARTMENT_ID --out /home/itelligence/Desktop/exported_mongo3.csv -q '{SALARY:{$gt:15000}}'
+
+===================select operation=====================================
+
+db.emp.find({}, {
+   FIRST_NAME: 1,
+   LAST_NAME: 1,
+   _id: 0
+})
+
+db.emp.find({}, {
+   FIRST_NAME: 1,
+   LAST_NAME: 1,
+ 
+})
+
+===================SORTING DATA===============
+
+===========MYSQL TO HBASE(SQOOP)=============
+---------EXISTING HBASE TABLE--------
+
+sqoop import --connect jdbc:mysql://localhost:3306/vaibhav --username root --password root --table employees --hbase-table emp
+
+
+------CREATE NEW HBASE TABLE----------
+
+sqoop import --connect jdbc:mysql://localhost:3306/vaibhav --username root --password root --table employees --hbase-create-table 
+
+===========HBASE TO PIG INTEGRATION=============
+
+A = LOAD'hbase://DB1.EMP' using org.apache.pig.backend.hadoop.
+   hbase.HBaseStorage();
+
+A = LOAD'hbase://DB1.EMP' using HBaseStorage();
+        
+STORE EMP INTO 'hbase://EMP' using org.apache.pig.backend.hadoop.
+hbase.HBaseStorage();
+
+===========HBASE TO HIVE=============        
+CREATE TABLE employees
+(
+first_name string,
+salary int
+) 
+STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+WITH SERDEPROPERTIES ("hbase.columns.mapping" = "fn:first_name,
+sal:salary")
+TBLPROPERTIES ("hbase.table.name" = "DB1.emp");
+===============
+com.mongodb.hadoop.pig.MongoLoader();
+com.mongodb.hadoop.pig.MongoStorage();
+=============MONGO TO PIG===============
+
+emp = LOAD 'mongodb://localhost:27017/vaibhav.emp' USING com.mongodb.hadoop.pig.MongoLoader();
+
+=============PIG TO MONGO===============
+
+STORE emp into 'mongodb://localhost:27017/8am.emp' using com.mongodb.hadoop.pig.MongoStorage();
+
+============MONGO TO HIVE===============
+
+CREATE TABLE employees
+( 
+ empid INT,
+ fname STRING,
+ ln string
+)
+STORED BY 'com.mongodb.hadoop.hive.MongoStorageHandler'
+WITH SERDEPROPERTIES('mongo.columns.mapping'='{"empid":"_id","fname":"first_name","ln":"last_name"}')
+TBLPROPERTIES('mongo.uri'='mongodb://localhost:27017/vaibhav.persons');
+=============CASSANDRA TO PIG============
+
+A = LOAD 'cassandra://localhost:7001/db1.emp' using  org.apache.cassandra.hadoop.pig.CqlStorage();
+
+=============CASSANDRA TO HIVE===========
+
+CREATE EXTERNAL TABLE emp
+(
+eid string,
+first_name string,
+last_name string
+)
+
+Vaibhav Bajaj • 12 Aug, 14:42
+
+
+
+
+select * from EMP where DEPARTMENT_ID='${hiveconf:year}';
+
+hive --hiveconf DEPARTMENT_ID=50 -f /home/itelligence/Desktop/abc2.hq
+
+L
+
+Vaibhav Bajaj • 12 Aug, 15:16
+
+Vaibhav added ankita.etlhive@gmail.com to the Hangout.
+13 Aug, 11:41
+
+
+
+
+Do we have class today or revision batch and if yes pls confirm timings
+
+Neha • 18 Aug, 08:53
+
+
+
+
+We do not have class today, we will take one last pending revision session online and link will be given for joining on group.
+
+Vaibhav Bajaj • 18 Aug, 09:34
+
+
+
+
+
+
+Those Candidates who have not send the updated resume to me.You can send it by  today till 6'0 clock. Mail id:-  ankita.etlhive@gmail.com   
+
+ankita.etlhive@gmail.com • 24 Aug, 15:28
+
+
+
+
+nchincholikar@gmail.com for junior profiles
+agrawal.kalpesh@gmail.com for all senior and junior profiles
+
+saama and LNT 
+
+Vaibhav Bajaj • 24 Aug, 19:59
+
+
+
+
+Can we send profiles to them?
+
+Ajinkya • 24 Aug, 20:09
+
+
+
+
+bindaas
+
+Vaibhav Bajaj • 24 Aug, 20:10
+
+
+
+
+Vaibhav, Do we have spark session tomorrow @ 8.00 am weekday batch.
+
+virendra gandhi • 27 Aug, 14:08
+
+
+
+
+Hi Vaibhav please respond.
+
+virendra gandhi • 27 Aug, 20:51
+
+
+
+
+Hi folks, I'd be sending a joining link for weekdays spark batch shortly, interested candidates can join the group.
+
+Vaibhav Bajaj • 27 Aug, 22:11
+
+
+
+
+Is the batch starting tomorrow
+
+Ashok • 27 Aug, 22:11
+
+
+
+
+batch will be starting this thursday
+
+Vaibhav Bajaj • 27 Aug, 22:11
+
+
+
+
+Hi folks, Good afternoon.
+I'm planning to start a weekdays batch for spark from 30th aug 8am-9:30AM.
+People who are interested can join using this link.
+https://hangouts.google.com/group/JjriPGkxJWfNZNAY2
+Kindly do not post any queries as response to this message as I want everyone to be able to see this message. If you have any queries then send it in person not on group.
+
+Vaibhav Bajaj • 28 Aug, 15:48
+
+
+
+
+
+FOLKS WHO DID NOT ATTEND THIS BATCH TODAY CAN ASLO JOIN THIS BATCH FROM TOMORROW
+
+Vaibhav Bajaj • 30 Aug, 09:11
+
+
+
+
+
+Hi,
+Greetings from Etlhive!!
+
+We have opening for Hadoop Developer. 
+Position- Junior Associate, Solution Engineering.
+
+Company Name- Global Fintech.
+Experience- 2- 10  Years. 
+
+If Anyone have Relevant Experience they can apply on it.-http://p.rfer.us/WESTERNUNaIOGjo
+
+
+Thanks & Regards,
+Ankita Deshpande.
+
+ankita.etlhive@gmail.com • 30 Aug, 14:34
+
+
+
+
+Hi Vaibhav
+
+Suppose if i have imported one table in hive from mysql(in warehouse dir)using sqoop and then if i do the incremental import for few other records, it is going to user/ittellgence dir and not warehouse dir....so if i run the select query on that table in hive ,it is not giving me the incremental records as they are in diff directory...also after dropping the table from hive .. incremental copy is there in /user/ittellgence dir...this is how it works or am i missing something here
+
+Varsha • 2 Sep, 14:10
+
+
+
+
+while specifying incremental import do not specify --hive-table clause insted of that just specify target dir and give the location of hive warehouse dir, that should solve the problem
+
+Vaibhav Bajaj • 2 Sep, 14:13
+
+
+
+
+Yep.. got it , thanks
+
+Varsha • 2 Sep, 14:26
+
+
+
+
+??
+
+Vaibhav Bajaj • 2 Sep, 14:26
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Send a message
